@@ -27,3 +27,5 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->version   = 2017061500;
 $plugin->requires  = 2013051407;
 $plugin->component = 'tcountview_timeglider2';
+$plugin->maturity = MATURITY_STABLE;
+$plugin->release = 'v1.0.0';

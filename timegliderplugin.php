@@ -104,7 +104,7 @@ class msocial_view_timeglider extends msocial_view_plugin {
         echo "<style type='text/css'>
         /* timeline div style */
 		#my-timeglider {
-			width:750px;
+			width:100%;
 			margin:32px auto 32px auto;
 			height:800px;
 		}

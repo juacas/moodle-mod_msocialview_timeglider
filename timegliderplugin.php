@@ -106,13 +106,13 @@ class msocial_view_timeglider extends msocial_view_plugin {
 		#my-timeglider {
 			width:100%;
 			margin:32px auto 32px auto;
-			height:800px;
+			height:600px;
 		}
 </style>";
         echo '<div id="my-timeglider" ></div>';
         echo $renderer->spacer(array('height' => 20));
         $reqs->js('/mod/msocial/view/timeglider/js/init_timeglider.js');
-        $reqs->js_init_call("init_view", [$this->cm->id, null], false);
+        $reqs->js_init_call("init_view", [$this->cm->id, null, $this->msocial->startdate, $this->msocial->enddate], false);
     }
 
     /**

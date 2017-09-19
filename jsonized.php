@@ -23,15 +23,15 @@
  * @copyright 2017 Juan Pablo de Castro <jpdecastro@tel.uva.es>
  * *******************************************************************************/
 use mod_msocial\connector\social_interaction;
-require_once ('../../../../config.php');
-require_once ('../../locallib.php');
-require_once ('../../msocialconnectorplugin.php');
-require_once ('../../socialinteraction.php');
+require_once('../../../../config.php');
+require_once('../../locallib.php');
+require_once('../../msocialconnectorplugin.php');
+require_once('../../socialinteraction.php');
 
 header('Content-Type: application/json; charset=utf-8');
 $id = required_param('id', PARAM_INT);
-$fromdate = optional_param('from', null, PARAM_ALPHANUMEXT);
-$todate = optional_param('from', null, PARAM_ALPHANUMEXT);
+$fromdate = optional_param('startdate', null, PARAM_ALPHANUMEXT);
+$todate = optional_param('enddate', null, PARAM_ALPHANUMEXT);
 $subtype = optional_param('subtype', null, PARAM_ALPHA);
 $cm = get_coursemodule_from_id('msocial', $id, null, null, MUST_EXIST);
 $msocial = $DB->get_record('msocial', array('id' => $cm->instance), '*', MUST_EXIST);
@@ -44,11 +44,19 @@ if ($subtype) {
     $subtypefilter = '';
 }
 $events = [];
+$lastitemdate = null;
+$firstitemdate = null;
 // Process interactions.
 $interactions = social_interaction::load_interactions((int) $msocial->id, $subtypefilter, $fromdate, $todate);
 foreach ($interactions as $interaction) {
     if ($interaction->timestamp == null) {
         continue;
+    }
+    if ($lastitemdate == null || $lastitemdate < $interaction->timestamp) {
+        $lastitemdate = $interaction->timestamp;
+    }
+    if ($firstitemdate == null || $firstitemdate > $interaction->timestamp) {
+        $firstitemdate = $interaction->timestamp;
     }
     $date = $interaction->timestamp->format('Y-m-d H:i:s');
     $subtype = $interaction->source;
@@ -67,9 +75,13 @@ $legend = [];
 foreach ($plugins as $plugin) {
     $legend[] = (object) ['title' => $plugin->get_name(), 'icon' => $plugin->get_icon()->out()];
 }
+$timespan = $lastitemdate->getTimestamp() - $firstitemdate->getTimestamp();
+$focusdate = $firstitemdate->add(new DateInterval("PT" . $timespan / 2 . "S"))->format('Y-m-d H:i:s');
+// Seems that zoom 6 is about 1 day and 29 1 year.
+$initialzoom = 6 + (int) log( $timespan / (3600 * 24), 29);
 $jsondata = [
                 (object) ['id' => 'e', 'description' => 'Twitter count timeglide', 'title' => 'Timeglider',
-                                'focus_date' => "2017-05-12 12:00:00", 'initial_zoom' => "38", 'events' => $events, 'legend' => $legend,
+                                'focus_date' => $focusdate, 'initial_zoom' => $initialzoom, 'events' => $events, 'legend' => $legend,
                                 'size_importance' => false]];
 $jsonencoded = json_encode($jsondata);
 echo $jsonencoded;

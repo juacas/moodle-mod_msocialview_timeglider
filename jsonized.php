@@ -76,7 +76,7 @@ foreach ($plugins as $plugin) {
     $legend[] = (object) ['title' => $plugin->get_name(), 'icon' => $plugin->get_icon()->out()];
 }
 $timespan = $lastitemdate->getTimestamp() - $firstitemdate->getTimestamp();
-$focusdate = $firstitemdate->add(new DateInterval("PT" . $timespan / 2 . "S"))->format('Y-m-d H:i:s');
+$focusdate = $firstitemdate->add(new DateInterval("PT" . (int)($timespan / 2) . "S"))->format('Y-m-d H:i:s');
 // Seems that zoom 6 is about 1 day and 29 1 year.
 $initialzoom = 6 + (int) log( $timespan / (3600 * 24), 29);
 $jsondata = [

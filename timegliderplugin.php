@@ -126,19 +126,16 @@ class msocial_view_timeglider extends msocial_view_plugin {
      */
     public function render_header_requirements($reqs, $viewparam) {
         if ($viewparam == $this->get_subtype()) {
-            $reqs->css('/mod/msocial/view/timeglider/css/aristo/jquery-ui-1.8.5.custom.css');
 
             $reqs->css('/mod/msocial/view/timeglider/js/timeglider/Timeglider.css');
-            $reqs->js('/mod/msocial/view/timeglider/js/jquery-1.4.4.min.js', true);
-            $reqs->js('/mod/msocial/view/timeglider/js/jquery-ui-1.8.9.custom.min.js');
-            $reqs->js('/mod/msocial/view/timeglider/js/jquery.tmpl.js');
+            $reqs->jquery_plugin('jquery.tmpl', 'msocialview_timeglider');
+            $reqs->jquery_plugin('jquery.mousewheel', 'msocialview_timeglider');
+            $reqs->jquery_plugin('jquery.ui.ipad', 'msocialview_timeglider');
+            $reqs->jquery_plugin('jquery.global', 'msocialview_timeglider');
             $reqs->js('/mod/msocial/view/timeglider/js/underscore-min.js');
             $reqs->js('/mod/msocial/view/timeglider/js/backbone-min.js');
             $reqs->js('/mod/msocial/view/timeglider/js/ba-debug.min.js');
-            $reqs->js('/mod/msocial/view/timeglider/js/jquery.mousewheel.min.js');
-            $reqs->js('/mod/msocial/view/timeglider/js/jquery.ui.ipad.js');
             $reqs->js('/mod/msocial/view/timeglider/js/raphael-min.js');
-            $reqs->js('/mod/msocial/view/timeglider/js/jquery.global.js');
             $reqs->js('/mod/msocial/view/timeglider/js/ba-tinyPubSub.js');
             $reqs->js('/mod/msocial/view/timeglider/js/timeglider/TG_Date.js');
             $reqs->js('/mod/msocial/view/timeglider/js/timeglider/TG_Org.js');

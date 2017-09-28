@@ -316,7 +316,7 @@ timeglider.TimelineView
 			}
 			
 		}) // end draggable
-		.delegate(CONTAINER + " .timeglider-timeline-event", "click", function () { 
+		.delegate( " .timeglider-timeline-event", "click", function () { 
 			// EVENT ON-CLICK !!!!!!
 			var eid = $(this).attr("id"); 
 			var ev = MED.eventPool[eid];
@@ -376,12 +376,12 @@ timeglider.TimelineView
 	  MED.zoom(-1);
 	});
 	
-	$(CONTAINER + " .timeglider-legend-close").live("click", function () {
+	$(CONTAINER).on("click", '.timeglider-legend-close', function () {
 	  var $legend = $(CONTAINER + " .timeglider-legend");
 	   $legend.fadeOut(300, function () { $legend.remove(); });
   });
   
-  $(CONTAINER + " .timeglider-legend-all").live("click", function () {
+  $(CONTAINER).on("click", '.timeglider-legend-all', function () {
     $(CONTAINER + " .timeglider-legend li").each(function () {
       $(this).removeClass("tg-legend-icon-selected");
     });
@@ -406,7 +406,7 @@ timeglider.TimelineView
 	});
 	
 	
-	$(this._views.TIMELINE_MENU + " .close-button").live("click", function () {
+	$(this._views.TIMELINE_MENU).on("click", '.close-button', function () {
 		 $(me._views.TIMELINE_MENU).toggleClass("timeglider-menu-hidden")
 	});
   
@@ -577,11 +577,11 @@ tg.TG_TimelineView.prototype = {
  	setPanButton : function ($sel, vel) {
  	     var me = this,
  	         _int = 33; // 33/1000 second interval
- 	     $($sel).live("mousedown", function () {
+ 	     $($sel).on("mousedown", '', function () {
     	    me.intervalMachine("pan", {type:"set", fn: me.pan, args:[vel], intvl:_int});  })
-        .live("mouseup", function () {
+        .on("mouseup", '' ,function () {
     	    me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  })
-        .live("mouseout", function () {
+        .on("mouseout", '', function () {
         	me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  });
   },
  	

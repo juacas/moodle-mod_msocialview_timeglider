@@ -100,7 +100,10 @@ class msocial_view_timeglider extends msocial_view_plugin {
      *
      * @see msocial_view_plugin::render_view()
      */
-    public function render_view($renderer, $reqs) {
+    public function render_view($renderer, $reqs, $filter) {
+        global $PAGE;
+        echo $filter->render_form($PAGE->url);
+
         echo "<style type='text/css'>
         /* timeline div style */
 		#my-timeglider {
@@ -112,7 +115,7 @@ class msocial_view_timeglider extends msocial_view_plugin {
         echo '<div id="my-timeglider" ></div>';
         echo $renderer->spacer(array('height' => 20));
         $reqs->js('/mod/msocial/view/timeglider/js/init_timeglider.js');
-        $reqs->js_init_call("init_view", [$this->cm->id, null, $this->msocial->startdate, $this->msocial->enddate], false);
+        $reqs->js_init_call("init_view", [$this->cm->id, null, $filter->get_filter_params_url()], false);
     }
 
     /**

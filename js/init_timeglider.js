@@ -7,19 +7,18 @@
  * @package msocial
  * *******************************************************************************
  */
-function init_view(Y, msocialid, user, startdate, enddate) {
-	deferred_init_view(Y, msocialid, user, startdate, enddate);
+function init_view(Y, msocialid, user, filterparams) {
+	deferred_init_view(Y, msocialid, user, filterparams);
 }
-function deferred_init_view(Y, msocialid, user, startdate, enddate) {
+function deferred_init_view(Y, msocialid, user, filterparams) {
 	$(document).ready(function () { 
-
+		var params = $.param(filterparams);
 		var tg1 = $("#my-timeglider").timeline({
 				"min_zoom":1, 
-				"max_zoom":29, 
-				"data_source":"view/timeglider/jsonized.php?id=" + msocialid + "&startdate=" + startdate + "&enddate=" + enddate,
+				"max_zoom":32, 
+				"data_source":"view/timeglider/jsonized.php?id=" + msocialid + "&" + params,
 				"icon_folder":""
 		});
-		
     }); // end document-ready
 	
 }

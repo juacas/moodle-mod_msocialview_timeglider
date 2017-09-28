@@ -30,25 +30,28 @@ require_once('../../socialinteraction.php');
 
 header('Content-Type: application/json; charset=utf-8');
 $id = required_param('id', PARAM_INT);
-$fromdate = optional_param('startdate', null, PARAM_ALPHANUMEXT);
-$todate = optional_param('enddate', null, PARAM_ALPHANUMEXT);
-$subtype = optional_param('subtype', null, PARAM_ALPHA);
+
 $cm = get_coursemodule_from_id('msocial', $id, null, null, MUST_EXIST);
 $msocial = $DB->get_record('msocial', array('id' => $cm->instance), '*', MUST_EXIST);
 require_login($cm->course, false, $cm);
 $plugins = mod_msocial\plugininfo\msocialconnector::get_enabled_connector_plugins($msocial);
+$contextcourse = context_course::instance($msocial->course);
 
-if ($subtype) {
-    $subtypefilter = "source ='$subtype'";
-} else {
-    $subtypefilter = '';
-}
 $events = [];
 $lastitemdate = null;
 $firstitemdate = null;
+
+$filter = new filter_interactions($_GET, $msocial);
+$usersstruct = msocial_get_users_by_type($contextcourse);
+list($students, $nonstudents, $activeusers, $userrecords) = array_values($usersstruct);
+$filter->set_users($usersstruct);
 // Process interactions.
-$interactions = social_interaction::load_interactions((int) $msocial->id, $subtypefilter, $fromdate, $todate);
+$interactions = social_interaction::load_interactions_filter($filter);
 foreach ($interactions as $interaction) {
+    $subtype = $interaction->source;
+    if (!isset($plugins[$subtype])) {
+        continue;
+    }
     if ($interaction->timestamp == null) {
         continue;
     }
@@ -65,9 +68,9 @@ foreach ($interactions as $interaction) {
     if (!$userinfo) {
         $userinfo = (object) ['socialname' => $interaction->nativefromname];
     }
-    $url = $plugin->get_interaction_url($interaction);
+    $thispageurl = $plugin->get_interaction_url($interaction);
     $event = ['id' => $interaction->uid, 'startdate' => $date, 'title' => $userinfo->socialname,
-                    'description' => $interaction->description, 'icon' => $plugin->get_icon()->out(), 'link' => $url,
+                    'description' => $interaction->description, 'icon' => $plugin->get_icon()->out(), 'link' => $thispageurl,
                     'importance' => 10, 'date_limit' => 'mo'];
     $events[] = $event;
 }
@@ -78,10 +81,12 @@ foreach ($plugins as $plugin) {
 $timespan = $lastitemdate->getTimestamp() - $firstitemdate->getTimestamp();
 $focusdate = $firstitemdate->add(new DateInterval("PT" . (int)($timespan / 2) . "S"))->format('Y-m-d H:i:s');
 // Seems that zoom 6 is about 1 day and 29 1 year.
-$initialzoom = 6 + (int) log( $timespan / (3600 * 24), 29);
+$initialzoom = 1 + 6 + (int) (log10( $timespan / (3600 * 24)) / log10(1.29));
 $jsondata = [
                 (object) ['id' => 'e', 'description' => 'Twitter count timeglide', 'title' => 'Timeglider',
-                                'focus_date' => $focusdate, 'initial_zoom' => $initialzoom, 'events' => $events, 'legend' => $legend,
-                                'size_importance' => false]];
+                                'focus_date' => $focusdate, 'initial_zoom' => min([32, $initialzoom]),
+                                'events' => $events, 'legend' => $legend,
+                                'size_importance' => false]
+                ];
 $jsonencoded = json_encode($jsondata);
 echo $jsonencoded;

@@ -32,8 +32,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017061500;
+$plugin->version   = 2017061501;
 $plugin->requires  = 2013051407;
 $plugin->component = 'msocialview_timeglider';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = 'v1.0.0';
+$plugin->dependencies = array('mod_msocial' => 2017081900);

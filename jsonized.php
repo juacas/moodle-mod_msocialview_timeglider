@@ -70,7 +70,7 @@ foreach ($interactions as $interaction) {
     }
     $thispageurl = $plugin->get_interaction_url($interaction);
     $event = ['id' => $interaction->uid, 'startdate' => $date, 'title' => $userinfo->socialname,
-                    'description' => $interaction->description, 'icon' => $plugin->get_icon()->out(), 'link' => $thispageurl,
+                    'description' => $plugin->get_interaction_description($interaction), 'icon' => $plugin->get_icon()->out(), 'link' => $thispageurl,
                     'importance' => 10, 'date_limit' => 'mo'];
     $events[] = $event;
 }

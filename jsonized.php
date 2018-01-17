@@ -47,39 +47,44 @@ list($students, $nonstudents, $activeusers, $userrecords) = array_values($userss
 $filter->set_users($usersstruct);
 // Process interactions.
 $interactions = social_interaction::load_interactions_filter($filter);
-foreach ($interactions as $interaction) {
-    $subtype = $interaction->source;
-    if (!isset($plugins[$subtype])) {
-        continue;
+if (count($interactions) > 0) {
+    foreach ($interactions as $interaction) {
+        $subtype = $interaction->source;
+        if (!isset($plugins[$subtype])) {
+            continue;
+        }
+        if ($interaction->timestamp == null) {
+            continue;
+        }
+        if ($lastitemdate == null || $lastitemdate < $interaction->timestamp) {
+            $lastitemdate = $interaction->timestamp;
+        }
+        if ($firstitemdate == null || $firstitemdate > $interaction->timestamp) {
+            $firstitemdate = $interaction->timestamp;
+        }
+        $date = $interaction->timestamp->format('Y-m-d H:i:s');
+        $subtype = $interaction->source;
+        $plugin = $plugins[$subtype];
+        $userinfo = $plugin->get_social_userid($interaction->fromid);
+        if (!$userinfo) {
+            $userinfo = (object) ['socialname' => $interaction->nativefromname];
+        }
+        $thispageurl = $plugin->get_interaction_url($interaction);
+        $event = ['id' => $interaction->uid, 'startdate' => $date, 'title' => $userinfo->socialname,
+                        'description' => $plugin->get_interaction_description($interaction), 'icon' => $plugin->get_icon()->out(), 'link' => $thispageurl,
+                        'importance' => 10, 'date_limit' => 'mo'];
+        $events[] = $event;
     }
-    if ($interaction->timestamp == null) {
-        continue;
-    }
-    if ($lastitemdate == null || $lastitemdate < $interaction->timestamp) {
-        $lastitemdate = $interaction->timestamp;
-    }
-    if ($firstitemdate == null || $firstitemdate > $interaction->timestamp) {
-        $firstitemdate = $interaction->timestamp;
-    }
-    $date = $interaction->timestamp->format('Y-m-d H:i:s');
-    $subtype = $interaction->source;
-    $plugin = $plugins[$subtype];
-    $userinfo = $plugin->get_social_userid($interaction->fromid);
-    if (!$userinfo) {
-        $userinfo = (object) ['socialname' => $interaction->nativefromname];
-    }
-    $thispageurl = $plugin->get_interaction_url($interaction);
-    $event = ['id' => $interaction->uid, 'startdate' => $date, 'title' => $userinfo->socialname,
-                    'description' => $plugin->get_interaction_description($interaction), 'icon' => $plugin->get_icon()->out(), 'link' => $thispageurl,
-                    'importance' => 10, 'date_limit' => 'mo'];
-    $events[] = $event;
+    $timespan = $lastitemdate->getTimestamp() - $firstitemdate->getTimestamp();
+    $focusdate = $firstitemdate->add(new DateInterval("PT" . (int)($timespan / 2) . "S"))->format('Y-m-d H:i:s');
+} else {
+    $focusdate = new DateTime();
+    $timespan = 60 * 24 * 3600;
 }
 $legend = [];
 foreach ($plugins as $plugin) {
     $legend[] = (object) ['title' => $plugin->get_name(), 'icon' => $plugin->get_icon()->out()];
 }
-$timespan = $lastitemdate->getTimestamp() - $firstitemdate->getTimestamp();
-$focusdate = $firstitemdate->add(new DateInterval("PT" . (int)($timespan / 2) . "S"))->format('Y-m-d H:i:s');
 // Seems that zoom 6 is about 1 day and 29 1 year.
 $initialzoom = 1 + 6 + (int) (log10( $timespan / (3600 * 24)) / log10(1.29));
 $jsondata = [

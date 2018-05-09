@@ -75,10 +75,12 @@ if (count($interactions) > 0) {
         }
 
         list($namefrom, $userlinkfrom) = msocial_create_userlink($interaction, 'from', $userrecords, $msocial, $cm, $redirecturl, $canviewothers);
-        $thispageurl = $plugin->get_interaction_url($interaction);
+        $interactionurl = $plugin->get_interaction_url($interaction);
 
-        $event = ['id' => $interaction->uid, 'startdate' => $date, 'title' => '<a href="' . $userlinkfrom . '">' . $namefrom . '</a>',//$userinfo->socialname,
-                        'description' => $plugin->get_interaction_description($interaction), 'icon' => $plugin->get_icon()->out(), 'link' => $thispageurl,
+        $event = ['id' => $interaction->uid, 'startdate' => $date,
+                        'title' => '<a href="' . $userlinkfrom . '">' . $namefrom . '</a>',
+                        'description' => $plugin->get_interaction_description($interaction),
+                        'icon' => $plugin->get_icon()->out(), 'link' => $interactionurl,
                         'importance' => 10, 'date_limit' => 'mo'];
         $events[] = $event;
     }

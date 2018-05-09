@@ -98,7 +98,7 @@ timeglider.TimelineView
       // generated, appended on the fly, then removed
       timeline_modal : $.template( null, "<div class='tg-modal timeglider-timeline-modal ui-widget-content' id='tl_${id}_modal'>" 
       	  + "<div class='close-button-remove'></div>"
-      	  + "<h4 id='title'>${title}</h4>"
+      	  + "<h4 id='title'>{{html title}}</h4>"
       	  + "<p>{{html description}}</p>"
       	  + "</div>"),
      
@@ -516,7 +516,7 @@ tg.TG_TimelineView.prototype = {
 	       default_template = $.template( null, "<div class='tg-modal timeglider-ev-modal ui-widget-content' id='ev_${id}_modal'>" 
       	   + "<div class='close-button-remove'></div>" 
       	   + "<div class='startdate'>${startdate}</div>"
-      	   + "<h4 id='title'>${title}</h4>"
+      	   + "<h4 id='title'>{{html title}}</h4>"
       	   + "<p>{{html description}}</p>"
       	   + "<ul class='timeglider-ev-modal-links'>{{html links}}</ul>"
       	   + "</div>");

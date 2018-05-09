@@ -30,12 +30,15 @@ require_once('../../classes/socialinteraction.php');
 
 header('Content-Type: application/json; charset=utf-8');
 $id = required_param('id', PARAM_INT);
+$redirecturl = optional_param('redirect', null, PARAM_RAW);
 
 $cm = get_coursemodule_from_id('msocial', $id, null, null, MUST_EXIST);
 $msocial = $DB->get_record('msocial', array('id' => $cm->instance), '*', MUST_EXIST);
 require_login($cm->course, false, $cm);
 $plugins = mod_msocial\plugininfo\msocialconnector::get_enabled_connector_plugins($msocial);
 $contextcourse = context_course::instance($msocial->course);
+$contextmodule = context_module::instance($cm->id);
+$canviewothers = has_capability('mod/msocial:viewothers', $contextmodule);
 
 $events = [];
 $lastitemdate = null;
@@ -43,6 +46,8 @@ $firstitemdate = null;
 
 $filter = new filter_interactions($_GET, $msocial);
 $usersstruct = msocial_get_users_by_type($contextcourse);
+$userrecords = $usersstruct->userrecords;
+
 $filter->set_users($usersstruct);
 // Process interactions.
 $interactions = social_interaction::load_interactions_filter($filter);
@@ -68,8 +73,11 @@ if (count($interactions) > 0) {
         if (!$userinfo) {
             $userinfo = (object) ['socialname' => $interaction->nativefromname];
         }
+
+        list($namefrom, $userlinkfrom) = msocial_create_userlink($interaction, 'from', $userrecords, $msocial, $cm, $redirecturl, $canviewothers);
         $thispageurl = $plugin->get_interaction_url($interaction);
-        $event = ['id' => $interaction->uid, 'startdate' => $date, 'title' => $userinfo->socialname,
+
+        $event = ['id' => $interaction->uid, 'startdate' => $date, 'title' => '<a href="' . $userlinkfrom . '">' . $namefrom . '</a>',//$userinfo->socialname,
                         'description' => $plugin->get_interaction_description($interaction), 'icon' => $plugin->get_icon()->out(), 'link' => $thispageurl,
                         'importance' => 10, 'date_limit' => 'mo'];
         $events[] = $event;

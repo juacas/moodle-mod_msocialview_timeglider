@@ -43,7 +43,6 @@ $firstitemdate = null;
 
 $filter = new filter_interactions($_GET, $msocial);
 $usersstruct = msocial_get_users_by_type($contextcourse);
-$users = $usersstruct->userrecords;
 $filter->set_users($usersstruct);
 // Process interactions.
 $interactions = social_interaction::load_interactions_filter($filter);

@@ -23,6 +23,7 @@
  * @copyright 2017 Juan Pablo de Castro <jpdecastro@tel.uva.es>
  * *******************************************************************************/
 use mod_msocial\connector\social_interaction;
+use mod_msocial\filter_interactions;
 require_once('../../../../config.php');
 require_once('../../locallib.php');
 require_once('../../classes/msocialconnectorplugin.php');
@@ -31,7 +32,7 @@ require_once('../../classes/socialinteraction.php');
 header('Content-Type: application/json; charset=utf-8');
 $id = required_param('id', PARAM_INT);
 $redirecturl = optional_param('redirect', null, PARAM_RAW);
-
+global $DB;
 $cm = get_coursemodule_from_id('msocial', $id, null, null, MUST_EXIST);
 $msocial = $DB->get_record('msocial', array('id' => $cm->instance), '*', MUST_EXIST);
 require_login($cm->course, false, $cm);

@@ -50,7 +50,7 @@ class msocial_view_timeglider extends msocial_view_plugin {
     /**
      * Get the settings for the plugin
      *
-     * @param MoodleQuickForm $mform The form to add elements to
+     * @param \MoodleQuickForm $mform The form to add elements to
      * @return void
      */
     public function get_settings(\MoodleQuickForm $mform) {

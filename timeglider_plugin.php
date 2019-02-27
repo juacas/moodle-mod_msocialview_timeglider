@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 /* ***************************
  * Module developed at the University of Valladolid
  * Designed and directed by Juan Pablo de Castro at telecommunication engineering school
@@ -22,19 +22,46 @@
  * @package msocial
  * *******************************************************************************
  */
-/**
- * This file contains the version information for the timeglider plugin
- *
- * @package    msocial_view
- * @copyright 2017 Juan Pablo de Castro {@email jpdecastro@tel.uva.es}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace mod_msocial\view;
+
+use eduvalab\msocial\msocial_plugin;
+use eduvalab\msocial\msocial_view_plugin;
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019022200;
-$plugin->requires  = 2013051407;
-$plugin->component = 'msocialview_timeglider';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = 'v1.2.0';
-$plugin->dependencies = array('mod_msocial' => 2019022200);
+
+/**
+ * library class for view the network activity as a table extending view plugin base class
+ *
+ * @package msocialview_timeglider
+ * @copyright 2017 Juan Pablo de Castro {@email jpdecastro@tel.uva.es}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class timeglider_plugin extends msocial_view_plugin {
+
+   
+    /**
+     * Save the settings for table plugin
+     *
+     * @param \stdClass $data
+     * @return bool
+     */
+    public function save_settings(\stdClass $data) {
+        if (isset($data->msocialview_timeglider_enabled)) {
+            $this->set_config('enabled', $data->msocialview_timeglider_enabled);
+        }
+        return true;
+    }
+
+  
+
+    public function get_category() {
+        return msocial_plugin::CAT_VISUALIZATION;
+    }
+
+    public function get_subtype() {
+        return 'timeglider';
+    }
+
+ 
+}

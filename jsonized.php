@@ -22,12 +22,10 @@
  * @package msocial
  * @copyright 2017 Juan Pablo de Castro <jpdecastro@tel.uva.es>
  * *******************************************************************************/
-use mod_msocial\connector\social_interaction;
-use mod_msocial\filter_interactions;
+use eduvalab\msocial\social_interaction;
+use eduvalab\msocial\filter_interactions;
 require_once('../../../../config.php');
 require_once('../../locallib.php');
-require_once('../../classes/msocialconnectorplugin.php');
-require_once('../../classes/socialinteraction.php');
 
 header('Content-Type: application/json; charset=utf-8');
 $id = required_param('id', PARAM_INT);
@@ -45,8 +43,9 @@ $events = [];
 $lastitemdate = null;
 $firstitemdate = null;
 
+
 $filter = new filter_interactions($_GET, $msocial);
-$usersstruct = msocial_get_users_by_type($contextcourse);
+$usersstruct = msocial_get_viewable_users($cm, $msocial);
 $userrecords = $usersstruct->userrecords;
 
 $filter->set_users($usersstruct);
@@ -81,7 +80,8 @@ if (count($interactions) > 0) {
         $event = ['id' => $interaction->uid, 'startdate' => $date,
                         'title' => '<a href="' . $userlinkfrom . '">' . $namefrom . '</a>',
                         'description' => $plugin->get_interaction_description($interaction),
-                        'icon' => $plugin->get_icon()->out(), 'link' => $interactionurl,
+                        'icon' => $plugin->get_plattform_adaptor()->get_icon()->out(),
+                        'link' => $interactionurl,
                         'importance' => 10, 'date_limit' => 'mo'];
         $events[] = $event;
     }
@@ -93,12 +93,13 @@ if (count($interactions) > 0) {
 }
 $legend = [];
 foreach ($plugins as $plugin) {
-    $legend[] = (object) ['title' => $plugin->get_name(), 'icon' => $plugin->get_icon()->out()];
+    $legend[] = (object) ['title' => $plugin->get_name(), 
+                            'icon' => $plugin->get_plattform_adaptor()->get_icon()->out()];
 }
 // Seems that zoom 6 is about 1 day and 29 1 year.
 $initialzoom = 1 + 6 + (int) (log10( $timespan / (3600 * 24)) / log10(1.29));
 $jsondata = [
-                (object) ['id' => 'e', 'description' => 'Twitter count timeglide', 'title' => 'Timeglider',
+                (object) ['id' => 'e', 'description' => 'MCOUNT timeglide', 'title' => 'Timeglider',
                                 'focus_date' => $focusdate, 'initial_zoom' => min([32, $initialzoom]),
                                 'events' => $events, 'legend' => $legend,
                                 'size_importance' => false]

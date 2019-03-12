@@ -18,7 +18,8 @@ class timeglider_moodle_adaptor extends moodle_adaptor
         return $result;
     }
     public function get_icon() {
-        return new \moodle_url('/mod/msocial/view/timeglider/pix/icon.svg');
+        $icon = new \moodle_url('/mod/msocial/view/timeglider/pix/icon.svg');
+        return $icon->out();
     }
     
     

@@ -80,7 +80,7 @@ if (count($interactions) > 0) {
         $event = ['id' => $interaction->uid, 'startdate' => $date,
                         'title' => '<a href="' . $userlinkfrom . '">' . $namefrom . '</a>',
                         'description' => $plugin->get_interaction_description($interaction),
-                        'icon' => $plugin->get_plattform_adaptor()->get_icon()->out(),
+                        'icon' => $plugin->get_plattform_adaptor()->get_icon(),
                         'link' => $interactionurl,
                         'importance' => 10, 'date_limit' => 'mo'];
         $events[] = $event;
@@ -94,7 +94,7 @@ if (count($interactions) > 0) {
 $legend = [];
 foreach ($plugins as $plugin) {
     $legend[] = (object) ['title' => $plugin->get_name(), 
-                            'icon' => $plugin->get_plattform_adaptor()->get_icon()->out()];
+                            'icon' => $plugin->get_plattform_adaptor()->get_icon()];
 }
 // Seems that zoom 6 is about 1 day and 29 1 year.
 $initialzoom = 1 + 6 + (int) (log10( $timespan / (3600 * 24)) / log10(1.29));

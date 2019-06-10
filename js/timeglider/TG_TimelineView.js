@@ -98,7 +98,7 @@ timeglider.TimelineView
       // generated, appended on the fly, then removed
       timeline_modal : $.template( null, "<div class='tg-modal timeglider-timeline-modal ui-widget-content' id='tl_${id}_modal'>" 
       	  + "<div class='close-button-remove'></div>"
-      	  + "<h4 id='title'>${title}</h4>"
+      	  + "<h4 id='title'>{{html title}}</h4>"
       	  + "<p>{{html description}}</p>"
       	  + "</div>"),
      
@@ -316,7 +316,7 @@ timeglider.TimelineView
 			}
 			
 		}) // end draggable
-		.delegate(CONTAINER + " .timeglider-timeline-event", "click", function () { 
+		.delegate( " .timeglider-timeline-event", "click", function () { 
 			// EVENT ON-CLICK !!!!!!
 			var eid = $(this).attr("id"); 
 			var ev = MED.eventPool[eid];
@@ -376,12 +376,12 @@ timeglider.TimelineView
 	  MED.zoom(-1);
 	});
 	
-	$(CONTAINER + " .timeglider-legend-close").live("click", function () {
+	$(CONTAINER).on("click", '.timeglider-legend-close', function () {
 	  var $legend = $(CONTAINER + " .timeglider-legend");
 	   $legend.fadeOut(300, function () { $legend.remove(); });
   });
   
-  $(CONTAINER + " .timeglider-legend-all").live("click", function () {
+  $(CONTAINER).on("click", '.timeglider-legend-all', function () {
     $(CONTAINER + " .timeglider-legend li").each(function () {
       $(this).removeClass("tg-legend-icon-selected");
     });
@@ -406,7 +406,7 @@ timeglider.TimelineView
 	});
 	
 	
-	$(this._views.TIMELINE_MENU + " .close-button").live("click", function () {
+	$(this._views.TIMELINE_MENU).on("click", '.close-button', function () {
 		 $(me._views.TIMELINE_MENU).toggleClass("timeglider-menu-hidden")
 	});
   
@@ -516,7 +516,7 @@ tg.TG_TimelineView.prototype = {
 	       default_template = $.template( null, "<div class='tg-modal timeglider-ev-modal ui-widget-content' id='ev_${id}_modal'>" 
       	   + "<div class='close-button-remove'></div>" 
       	   + "<div class='startdate'>${startdate}</div>"
-      	   + "<h4 id='title'>${title}</h4>"
+      	   + "<h4 id='title'>{{html title}}</h4>"
       	   + "<p>{{html description}}</p>"
       	   + "<ul class='timeglider-ev-modal-links'>{{html links}}</ul>"
       	   + "</div>");
@@ -577,11 +577,11 @@ tg.TG_TimelineView.prototype = {
  	setPanButton : function ($sel, vel) {
  	     var me = this,
  	         _int = 33; // 33/1000 second interval
- 	     $($sel).live("mousedown", function () {
+ 	     $($sel).on("mousedown", '', function () {
     	    me.intervalMachine("pan", {type:"set", fn: me.pan, args:[vel], intvl:_int});  })
-        .live("mouseup", function () {
+        .on("mouseup", '' ,function () {
     	    me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  })
-        .live("mouseout", function () {
+        .on("mouseout", '', function () {
         	me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  });
   },
  	
